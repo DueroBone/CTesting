@@ -16,15 +16,16 @@ void *doStuff(void *arg)
   {
     hello++;
   }
-  printf("Thread Done: %d\n", threadNumber);
+  printf("*Thread Done: %d\n", threadNumber);
   return NULL;
 }
 
 int main()
 {
-  pthread_t threads[10];
+  int numThreads = 6;
+  pthread_t threads[numThreads];
   int maxNumber = 2e9;
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i < numThreads; i++)
   {
     int *args = malloc(sizeof(int) * 2);
     args[0] = i;

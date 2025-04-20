@@ -1,0 +1,3 @@
+# Ignore files with no extension
+*.
+*.asm
