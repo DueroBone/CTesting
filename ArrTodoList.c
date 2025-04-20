@@ -172,7 +172,9 @@ int main()
   printTasks(taskList);
   printf("\n");
 
-  removeTask(taskList, 1);
+  char toBeRemoved[3];
+  fgets(toBeRemoved, 2, stdin);
+  removeTask(taskList, toBeRemoved[0] - '0');
   printTasks(taskList);
   removeList(taskList);
   return 0;
