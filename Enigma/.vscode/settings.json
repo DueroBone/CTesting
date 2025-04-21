@@ -10,6 +10,8 @@
     "_bounds.h": "c",
     "cdefs.h": "c",
     "availability.h": "c",
-    "_types.h": "c"
+    "_types.h": "c",
+    "rotorgenerator.h": "c",
+    "rotor.h": "c"
   }
 }

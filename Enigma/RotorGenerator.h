@@ -1,3 +1,6 @@
 #pragma once
 
-struct Rotor *generateRotor(int rotorNum, int startingOffset);
+#include "Rotor.h"
+
+/** RotorNums currently supported: 0-2 */
+Rotor *generateRotor(int rotorNum, int startingOffset);

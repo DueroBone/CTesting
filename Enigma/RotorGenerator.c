@@ -1,5 +1,3 @@
-#pragma once
-
 #include "Rotor.h"
 #include <stdio.h>
 #include <stdlib.h>
