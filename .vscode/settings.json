@@ -1,0 +1,15 @@
+{
+  "files.associations": {
+    "*.java": "java",
+    "Sun May 28 21:11:52 2023": "plaintext",
+    "string.h": "c",
+    "_string.h": "c",
+    "stdlib.h": "c",
+    "stdio.h": "c",
+    "_stdlib.h": "c",
+    "_bounds.h": "c",
+    "cdefs.h": "c",
+    "availability.h": "c",
+    "_types.h": "c"
+  }
+}
