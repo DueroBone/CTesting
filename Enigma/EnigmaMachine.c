@@ -1,6 +1,7 @@
 #include "EnigmaMachine.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "Rotor.h"
 #include "Reflector.h"
 #include "Plugboard.h"
@@ -11,7 +12,7 @@ EnigmaMachine *generateMachine(Rotor *rotor1, Rotor *rotor2, Rotor *rotor3, Refl
   if (machine == NULL)
   {
     fprintf(stderr, "Memory allocation failed\n");
-    exit(EXIT_FAILURE);
+    return NULL;
   }
   machine->rotors[0] = rotor1;
   machine->rotors[1] = rotor2;
@@ -32,9 +33,40 @@ void setRotorPositions(EnigmaMachine *machine, int pos1, int pos2, int pos3)
   machine->rotors[1]->position = pos2;
   machine->rotors[2]->position = pos3;
 }
-char runEnigmaMachine(EnigmaMachine *machine, char *input)
+
+char *runEnigmaMachineChar(EnigmaMachine *machine, char *input)
 {
+  int length = strlen(input);
+  for (int i = 0; i < length; i++)
+  {
+    input[i] = toupper(input[i]) - 'A';
+  }
 }
+
+int *runEnigmaMachine(EnigmaMachine *machine, int *input)
+{
+  // TODO
+  return 0;
+}
+
 void freeEnigmaMachine(EnigmaMachine *machine)
 {
+  for (int i = 0; i < 3; i++)
+  {
+    free(machine->rotors[i]);
+  }
+  free(machine);
+}
+
+void rotateRotors(EnigmaMachine *machine)
+{
+  rotateRotor(machine->rotors[0]);
+  if (machine->rotors[0]->position == 0)
+  {
+    rotateRotor(machine->rotors[1]);
+    if (machine->rotors[1]->position == 0)
+    {
+      rotateRotor(machine->rotors[2]);
+    }
+  }
 }

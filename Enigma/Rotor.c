@@ -52,7 +52,12 @@ void rotateRotor(Rotor *rotor)
 
 char *rotorToString(Rotor *rotor)
 {
-  char *result = malloc(100 * sizeof(char)); // Allocate memory for the string
+  char *result = malloc(100 * sizeof(char)); // TODO: Check how large this needs to be
+  if (result == NULL)
+  {
+    fprintf(stderr, "Memory allocation failed\n");
+    exit(EXIT_FAILURE);
+  }
   int i;
   int j = 0;
   for (i = 0; i < (26 * 3); i += 3)

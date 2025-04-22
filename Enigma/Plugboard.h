@@ -2,6 +2,5 @@
 
 typedef struct
 {
-  int numPlugs;
-  char *wiring;
+  int wiring[10][2];
 } Plugboard;

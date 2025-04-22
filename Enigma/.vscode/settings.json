@@ -12,6 +12,11 @@
     "availability.h": "c",
     "_types.h": "c",
     "rotorgenerator.h": "c",
-    "rotor.h": "c"
+    "rotor.h": "c",
+    "reflector.h": "c",
+    "cstring": "c",
+    "locale": "c",
+    "__locale": "c",
+    "cctype": "c"
   }
 }

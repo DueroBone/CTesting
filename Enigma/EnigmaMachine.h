@@ -12,5 +12,5 @@ typedef struct
 
 EnigmaMachine *generateMachine(Rotor *rotor1, Rotor *rotor2, Rotor *rotor3, Reflector *reflector, Plugboard *plugboard);
 void setRotorPositions(EnigmaMachine *machine, int pos1, int pos2, int pos3);
-char runEnigmaMachine(EnigmaMachine *machine, char *input);
+char runEnigmaMachineChar(EnigmaMachine *machine, char *input);
 void freeEnigmaMachine(EnigmaMachine *machine);

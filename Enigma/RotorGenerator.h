@@ -2,5 +2,5 @@
 
 #include "Rotor.h"
 
-/** RotorNums currently supported: 0-2 */
+/** RotorNums currently supported: 1-3 */
 Rotor *generateRotor(int rotorNum, int startingOffset);

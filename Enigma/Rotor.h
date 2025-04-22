@@ -10,3 +10,4 @@ typedef struct
 int getRotorOutput(Rotor *rotor, int input);
 void setRotorOffset(Rotor *rotor, int position);
 char *rotorToString(Rotor *rotor);
+void rotateRotor(Rotor *rotor);
