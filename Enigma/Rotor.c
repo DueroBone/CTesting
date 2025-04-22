@@ -26,28 +26,28 @@ int getRotorOutput(Rotor *rotor, int input)
     return -1; // Invalid input
   }
 
-  // Apply the offset to the input
-  int adjustedInput = mod((input + rotor->offset));
+  // Apply the position to the input
+  int adjustedInput = mod((input + rotor->position));
 
   // Get the output from the rotor's wirings
   int output = rotor->wirings[adjustedInput];
 
-  // Adjust the output back by subtracting the offset
-  output = mod((output - rotor->offset));
+  // Adjust the output back by subtracting the position
+  output = mod((output - rotor->position));
 
   return output;
 }
 
-void setRotorOffset(Rotor *rotor, int offset)
+void setRotorOffset(Rotor *rotor, int position)
 {
-  // Set the rotor's offset
-  rotor->offset = mod(offset);
+  // Set the rotor's position
+  rotor->position = mod(position);
 }
 
 void rotateRotor(Rotor *rotor)
 {
-  // Rotate the rotor by incrementing the offset
-  rotor->offset = mod((rotor->offset + 1));
+  // Rotate the rotor by incrementing the position
+  rotor->position = mod((rotor->position + 1));
 }
 
 char *rotorToString(Rotor *rotor)
@@ -63,7 +63,7 @@ char *rotorToString(Rotor *rotor)
     j++;
   }
   char offsetStr[3];
-  snprintf(offsetStr, sizeof(offsetStr), "%d", rotor->offset);
+  snprintf(offsetStr, sizeof(offsetStr), "%d", rotor->position);
   result[i] = offsetStr[0];
   result[i + 1] = offsetStr[1];
   result[i + 2] = '\0'; // Null-terminate the string

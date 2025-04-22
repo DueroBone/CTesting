@@ -17,7 +17,7 @@ Rotor *generateRotor(int rotorNum, int startingOffset)
   Rotor *rotor = malloc(sizeof(Rotor));
   if (rotor == NULL)
   {
-    fprintf(stderr, "Memory allocation failed:\n   Generating rotor %d at offset %d\n", rotorNum, startingOffset);
+    fprintf(stderr, "Memory allocation failed:\n   Generating rotor %d at position %d\n", rotorNum, startingOffset);
     return NULL;
   }
   if (rotorNum < 1 || rotorNum > 3)
@@ -26,7 +26,7 @@ Rotor *generateRotor(int rotorNum, int startingOffset)
     free(rotor);
     return NULL;
   }
-  rotor->offset = startingOffset % 26;
+  rotor->position = startingOffset % 26;
   for (int i = 0; i < 26; i++)
   {
     rotor->wirings[i] = rotorWirings[rotorNum - 1][i];
