@@ -1,9 +1,5 @@
-#pragma once
-
-typedef struct
-{
-  int wiring[26]; // The wiring of the reflector
-} Reflector;
+#include "Reflector.h"
+#include <stdlib.h>
 
 Reflector *generateReflector(int reflectorNum);
 void freeReflector(Reflector *reflector);

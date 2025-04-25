@@ -1,10 +1,11 @@
-#include "EnigmaMachine.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "Rotor.h"
+#include "EnigmaMachine.h"
 #include "Reflector.h"
 #include "Plugboard.h"
+#include "Formatter.h"
 
 EnigmaMachine *generateMachine(Rotor *rotor1, Rotor *rotor2, Rotor *rotor3, Reflector *reflector, Plugboard *plugboard)
 {
@@ -18,6 +19,15 @@ EnigmaMachine *generateMachine(Rotor *rotor1, Rotor *rotor2, Rotor *rotor3, Refl
   machine->rotors[1] = rotor2;
   machine->rotors[2] = rotor3;
   return machine;
+}
+
+char toUpper(char c)
+{
+  if (c >= 'a' && c <= 'z')
+  {
+    return c - ('a' - 'A');
+  }
+  return c;
 }
 
 void setRotorPositions(EnigmaMachine *machine, int pos1, int pos2, int pos3)
@@ -34,19 +44,25 @@ void setRotorPositions(EnigmaMachine *machine, int pos1, int pos2, int pos3)
   machine->rotors[2]->position = pos3;
 }
 
+/** Input must be in the range of 0-25 */
+int *runEnigmaMachine(EnigmaMachine *machine, int *input, int length)
+{
+  // TODO
+  for (int i = 0; i < length; i++)
+  {
+    input[i] += 1;
+  }
+  return input;
+}
+
+/** Copies the string to the heap */
 char *runEnigmaMachineChar(EnigmaMachine *machine, char *input)
 {
   int length = strlen(input);
-  for (int i = 0; i < length; i++)
-  {
-    input[i] = toupper(input[i]) - 'A';
-  }
-}
+  int *intInput = charArrToIntArr(input, length);
+  runEnigmaMachine(machine, intInput, length);
 
-int *runEnigmaMachine(EnigmaMachine *machine, int *input)
-{
-  // TODO
-  return 0;
+  return intArrToCharArr(intInput, length);
 }
 
 void freeEnigmaMachine(EnigmaMachine *machine)

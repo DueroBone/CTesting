@@ -1,3 +1,3 @@
 #pragma once
 
-double calculateBigramScore(const int *text);
+double calculateBigramScore(const int *text, int length);
