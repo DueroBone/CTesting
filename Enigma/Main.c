@@ -58,5 +58,6 @@ int main()
   }
   double averageTime = totalTime / 10;
   printf("Average time taken: %f seconds\n", averageTime);
+  printf("Finished\n");
   return 0;
 }

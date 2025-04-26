@@ -2,9 +2,9 @@
 
 typedef struct
 {
-  int wiring[26]; // The wiring of the reflector
+  int reflectorNum;
 } Reflector;
 
 Reflector *generateReflector(int reflectorNum);
 void freeReflector(Reflector *reflector);
-int runReflector(Reflector *reflector, char input);
+int runReflector(Reflector *reflector, int input);

@@ -71,6 +71,8 @@ void freeEnigmaMachine(EnigmaMachine *machine)
   {
     free(machine->rotors[i]);
   }
+  free(machine->reflector);
+  free(machine->plugboard);
   free(machine);
 }
 
