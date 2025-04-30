@@ -19,6 +19,11 @@ int getRotorOutput(Rotor *rotor, int input, int isReverse)
 {
   int adjustedInput = (input + rotor->position) % 26;
 
+  if (adjustedInput < 0)
+  {
+    printf("Adjusted input is negative: %d  in:%d  pos:%d\n", adjustedInput, input, rotor->position);
+  }
+
   int output = rotor->wirings[adjustedInput][isReverse];
 
   output = (output - rotor->position) % 26;
@@ -85,7 +90,7 @@ Rotor *generateRotor(int rotorNum, int startingOffset)
     rotor->wirings[i][0] = rotorWirings[rotorNum - 1][i];
     for (int j = 0; j < 26; j++)
     {
-      if (i == rotorWirings[j])
+      if (i == rotorWirings[rotorNum - 1][j])
       {
         rotor->wirings[i][1] = rotorWirings[rotorNum - 1][j];
         break;

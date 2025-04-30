@@ -18,6 +18,8 @@ EnigmaMachine *generateMachine(Rotor *rotor1, Rotor *rotor2, Rotor *rotor3, Refl
   machine->rotors[0] = rotor1;
   machine->rotors[1] = rotor2;
   machine->rotors[2] = rotor3;
+  machine->reflector = reflector;
+  machine->plugboard = plugboard;
   return machine;
 }
 
@@ -50,7 +52,15 @@ int *runEnigmaMachine(EnigmaMachine *machine, int *input, int length)
   // TODO
   for (int i = 0; i < length; i++)
   {
-    input[i] += 1;
+    // TODO: plugboard
+    input[i] = getRotorOutput(machine->rotors[0], input[i], 0);
+    input[i] = getRotorOutput(machine->rotors[1], input[i], 0);
+    input[i] = getRotorOutput(machine->rotors[2], input[i], 0);
+    input[i] = runReflector(machine->reflector, input[i]);
+    input[i] = getRotorOutput(machine->rotors[2], input[i], 1);
+    input[i] = getRotorOutput(machine->rotors[1], input[i], 1);
+    input[i] = getRotorOutput(machine->rotors[0], input[i], 1);
+    // TODO: plugboard
   }
   return input;
 }
@@ -74,6 +84,7 @@ void freeEnigmaMachine(EnigmaMachine *machine)
   free(machine->reflector);
   free(machine->plugboard);
   free(machine);
+  machine = NULL;
 }
 
 void rotateRotors(EnigmaMachine *machine)

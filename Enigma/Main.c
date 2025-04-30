@@ -1,6 +1,7 @@
 #include <time.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <omp.h>
 #include "EnigmaMachine.h"
 #include "Rotor.h"
 #include "Reflector.h"
@@ -8,22 +9,26 @@
 
 int main()
 {
-  int repeats = 10;
+  clock_t Mainstart_time = clock();
+  int repeats = 500;
   double times[repeats];
-  for (; repeats > 0; repeats--)
+  int numThreads = 12;
+  omp_set_num_threads(numThreads);
+#pragma omp parallel for
+  for (int i = 0; i < repeats; i++)
   {
     EnigmaMachine *machine = generateMachine(
-        generateRotor(1, 0), // Replace with actual rotor initialization
-        generateRotor(2, 0), // Replace with actual rotor initialization
-        generateRotor(3, 0), // Replace with actual rotor initialization
-        NULL,                // Replace with actual reflector initialization
-        NULL                 // Replace with actual plugboard initialization
+        generateRotor(1, 0),
+        generateRotor(2, 0),
+        generateRotor(3, 0),
+        generateReflector(0),
+        NULL // Replace with actual plugboard initialization
     );
     FILE *file = fopen("bible.txt", "r");
     if (file == NULL)
     {
       perror("Error opening file");
-      return 1;
+      continue;
     }
 
     int length = 4167230;
@@ -32,32 +37,35 @@ int main()
     {
       perror("Error reading file");
       fclose(file);
-      return 1;
+      continue;
     }
 
     fclose(file);
 
-    // printf("Input: %s\n", input);
+    // input = "Hello world";
+
+    // printf("Input: %s  ", input);
 
     clock_t start_time = clock();
     char *output = runEnigmaMachineChar(machine, input);
     clock_t end_time = clock();
 
-    // printf("Output: %s", output);
+    // printf("Output: %s  |  ", output);
     double timeTaken = (double)(end_time - start_time) / CLOCKS_PER_SEC;
-    printf("Time taken: %f seconds\n", timeTaken);
-    free(input);
+    // printf("Time taken: %f seconds\n", timeTaken);
+    // free(input);
     free(output);
     freeEnigmaMachine(machine);
-    times[repeats] = timeTaken;
+    times[i] = timeTaken;
   }
+#pragma omp barrier
   double totalTime = 0;
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i < repeats; i++)
   {
     totalTime += times[i];
   }
-  double averageTime = totalTime / 10;
+  double averageTime = totalTime / repeats / numThreads;
   printf("Average time taken: %f seconds\n", averageTime);
-  printf("Finished\n");
+  printf("Finished after %f seconds\n", (double)(clock() - Mainstart_time) / CLOCKS_PER_SEC);
   return 0;
 }

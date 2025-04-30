@@ -17,9 +17,8 @@
       "MIMode": "lldb",
       "preLaunchTask": "Build All"
     },
-
     {
-      "name": "Optimized Build and Debug",
+      "name": "MemCheck Build and Debug",
       "type": "cppdbg",
       "request": "launch",
       "program": "${workspaceFolder}/Enigma",
@@ -29,8 +28,7 @@
       "environment": [],
       "externalConsole": false,
       "MIMode": "lldb",
-      "preLaunchTask": "Build All Optimized"
+      "preLaunchTask": "Build All MemCheck"
     }
-
   ]
 }

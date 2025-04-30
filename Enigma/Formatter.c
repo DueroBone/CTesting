@@ -13,7 +13,7 @@ char *intArrToCharArr(int *input, int length)
   return output;
 }
 
-/** Removes the null terminator */
+/** Removes the null terminator, copies to heap */
 int *charArrToIntArr(char *input, int length)
 {
   int *output = malloc(sizeof(int) * length);
@@ -24,7 +24,7 @@ int *charArrToIntArr(char *input, int length)
   }
   for (int i = 0; i < length; i++)
   {
-    output[i] = toupper(input[i]) - 'A';
+    output[i] = (((toupper(input[i]) - 'A') % 26) + 26) % 26;
   }
   return output;
 }
