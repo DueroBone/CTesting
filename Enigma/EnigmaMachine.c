@@ -71,8 +71,9 @@ char *runEnigmaMachineChar(EnigmaMachine *machine, char *input)
   int length = strlen(input);
   int *intInput = charArrToIntArr(input, length);
   runEnigmaMachine(machine, intInput, length);
-
-  return intArrToCharArr(intInput, length);
+  char *output = intArrToCharArr(intInput, length);
+  free(intInput);
+  return output;
 }
 
 void freeEnigmaMachine(EnigmaMachine *machine)

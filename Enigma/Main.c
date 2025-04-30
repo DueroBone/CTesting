@@ -10,9 +10,9 @@
 int main()
 {
   clock_t Mainstart_time = clock();
-  int repeats = 500;
+  int repeats = 2000;
   double times[repeats];
-  int numThreads = 12;
+  int numThreads = 5;
   omp_set_num_threads(numThreads);
 #pragma omp parallel for
   for (int i = 0; i < repeats; i++)
@@ -53,7 +53,7 @@ int main()
     // printf("Output: %s  |  ", output);
     double timeTaken = (double)(end_time - start_time) / CLOCKS_PER_SEC;
     // printf("Time taken: %f seconds\n", timeTaken);
-    // free(input);
+    free(input);
     free(output);
     freeEnigmaMachine(machine);
     times[i] = timeTaken;
@@ -64,7 +64,7 @@ int main()
   {
     totalTime += times[i];
   }
-  double averageTime = totalTime / repeats / numThreads;
+  double averageTime = totalTime / repeats;
   printf("Average time taken: %f seconds\n", averageTime);
   printf("Finished after %f seconds\n", (double)(clock() - Mainstart_time) / CLOCKS_PER_SEC);
   return 0;
