@@ -8,21 +8,11 @@ static const int reflectorWirings[][26] = {
     {5, 21, 15, 9, 8, 0, 14, 24, 4, 3, 17, 25, 23, 22, 6, 2, 19, 10, 20, 16, 18, 1, 13, 12, 7, 11},
 };
 
-Reflector *generateReflector(int reflectorNum)
+Reflector generateReflector(int reflectorNum)
 {
-  Reflector *reflector = malloc(sizeof(Reflector));
-  if (reflector == NULL)
-  {
-    return NULL;
-  }
-  reflector->reflectorNum = reflectorNum;
+  Reflector reflector;
+  reflector.reflectorNum = reflectorNum;
   return reflector;
-}
-
-void freeReflector(Reflector *reflector)
-{
-  free(reflector);
-  reflector = NULL;
 }
 
 int runReflector(Reflector *reflector, int input)

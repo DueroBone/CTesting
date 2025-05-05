@@ -2,12 +2,65 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <omp.h>
+#include <string.h>
 #include "EnigmaMachine.h"
 #include "Rotor.h"
 #include "Reflector.h"
 #include "Plugboard.h"
+#include "EngishScorer.h"
+#include "Formatter.h"
+#include "RotorBruteForce.h"
 
 int main()
+{
+  EnigmaMachine *machine = generateMachine(
+      generateRotor(1, 12),
+      generateRotor(2, 3),
+      generateRotor(3, 23),
+      generateReflector(1),
+      // generateEmptyPlugboard()
+      generatePlugboard((int[10][2]){{0, 1}, {2, 3}, {4, 5}, {6, 7}, {8, 9}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}}) // Example plugboard wiring
+  );
+
+  // FILE *file = fopen("bible.txt", "r");
+  int length = 1000;
+  // char *input = malloc(length * sizeof(char));
+  // fgets(input, length * sizeof(char), file);
+  // fclose(file);
+
+  // charArrToIntArr(input, strlen(input));
+  char input[100] = "The quick brown fox jumps over the lazy dog";
+  // char input[60] = "BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB";
+  // printf("Enter text to encrypt: ");
+  fgets(input, sizeof(input), stdin);
+  // Remove newline character from input
+  size_t len = strlen(input);
+  if (len > 0 && input[len - 1] == '\n')
+  {
+    input[len - 1] = '\0';
+    len--;
+  }
+
+  char *output = runEnigmaMachineChar(machine, input);
+  printf("Encrypted text: %s\n\n", output);
+  // return 0;
+  RotorBruteForceResult result = rotorBruteForce(machine, charArrToIntArr(output, len), len);
+
+  printf("Rotor Brute Force Results:\n");
+  char **resultsText = testResults(result, charArrToIntArr(output, len), len);
+  for (int i = 0; i < result.numResults; i++)
+  {
+    printf("Result %d: %s\n\n", i + 1, resultsText[i]);
+    free(resultsText[i]);
+  }
+  free(resultsText);
+
+  free(output);
+  freeEnigmaMachine(machine);
+  return 0;
+}
+
+int main_OLD()
 {
   clock_t Mainstart_time = clock();
   int repeats = 2000;
@@ -22,7 +75,7 @@ int main()
         generateRotor(2, 0),
         generateRotor(3, 0),
         generateReflector(0),
-        NULL // Replace with actual plugboard initialization
+        generateEmptyPlugboard() // Replace with actual plugboard initialization
     );
     FILE *file = fopen("bible.txt", "r");
     if (file == NULL)

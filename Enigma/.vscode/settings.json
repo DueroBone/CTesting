@@ -18,7 +18,8 @@
     "locale": "c",
     "__locale": "c",
     "cctype": "c",
-    "enigmamachine.h": "c"
+    "enigmamachine.h": "c",
+    "__node_handle": "c"
   },
   "C_Cpp.errorSquiggles": "enabled"
 }

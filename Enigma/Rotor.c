@@ -28,6 +28,11 @@ int getRotorOutput(Rotor *rotor, int input, int isReverse)
 
   output = (output - rotor->position) % 26;
 
+  if (output < 0)
+  {
+    output += 26;
+  }
+
   return output;
 }
 
@@ -67,38 +72,51 @@ char *rotorToString(Rotor *rotor)
   return result;
 }
 
-Rotor *generateRotor(int rotorNum, int startingOffset)
+Rotor generateRotor(int rotorNum, int startingOffset)
 {
-  Rotor *rotor = malloc(sizeof(Rotor));
-  if (rotor == NULL)
-  {
-    fprintf(stderr, "Memory allocation failed:\n   Generating rotor %d at position %d\n", rotorNum, startingOffset);
-    return NULL;
-  }
+  Rotor rotor;
   if (rotorNum < 1 || rotorNum > 3)
   {
-    fprintf(stderr, "Invalid rotor number: %d\n", rotorNum);
-    free(rotor);
-    return NULL;
+    fprintf(stderr, "Invalid rotor number: %d, RETURNING ROTOR I\n", rotorNum);
+    return generateRotor(1, 0);
   }
 
-  rotor->rotorNum = rotorNum;
-  rotor->position = startingOffset % 26;
-  rotor->notchPositon = rotorNotchPositions[rotorNum - 1];
+  rotor.rotorNum = rotorNum;
+  rotor.position = startingOffset % 26;
+  rotor.notchPositon = rotorNotchPositions[rotorNum - 1];
   for (int i = 0; i < 26; i++)
   {
-    rotor->wirings[i][0] = rotorWirings[rotorNum - 1][i];
-    for (int j = 0; j < 26; j++)
+    rotor.wirings[i][0] = rotorWirings[rotorNum - 1][i];
+    int j;
+    for (j = 0; j < 26; j++)
     {
       if (i == rotorWirings[rotorNum - 1][j])
       {
-        rotor->wirings[i][1] = rotorWirings[rotorNum - 1][j];
+        rotor.wirings[i][1] = j;
         break;
       }
+    }
+    if (j == 26)
+    {
+      fprintf(stderr, "Invalid wiring for rotor %d\n", rotorNum);
     }
   }
 
   return rotor;
+}
+
+int testRotor(Rotor *rotor)
+{
+  for (int i = 0; i < 26; i++)
+  {
+    int location = rotor->wirings[i][0];
+    if (i != rotor->wirings[location][1])
+    {
+      printf("Rotor %d test failed at index %d\n", rotor->rotorNum, i);
+      return 0;
+    }
+  }
+  return 1;
 }
 
 void freeRotor(Rotor *rotor)

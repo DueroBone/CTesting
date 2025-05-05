@@ -3,8 +3,8 @@ CC = /usr/bin/gcc
 SRC = $(wildcard *.c)
 OUT = Enigma
 
-# Default flags
-CFLAGS = -O0 -Wall -Werror -fcolor-diagnostics -fansi-escape-codes -Xpreprocessor -fopenmp
+# Default flags   -Werror
+CFLAGS = -O2 -Wall  -fcolor-diagnostics -fansi-escape-codes -Xpreprocessor -fopenmp
 INCLUDES = -I/usr/local/Cellar/libomp/20.1.3/include/
 LIBS = -L/usr/local/Cellar/libomp/20.1.3/lib/ -lomp
 

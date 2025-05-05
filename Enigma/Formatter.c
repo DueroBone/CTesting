@@ -7,6 +7,11 @@ char *intArrToCharArr(int *input, int length)
   char *output = malloc(sizeof(char) * (length + 1));
   for (int i = 0; i < length; i++)
   {
+    if (input[i] == -1)
+    {
+      output[i] = ' ';
+      continue;
+    }
     output[i] = input[i] + 'A';
   }
   output[length] = '\0';
@@ -24,6 +29,11 @@ int *charArrToIntArr(char *input, int length)
   }
   for (int i = 0; i < length; i++)
   {
+    if (input[i] == ' ')
+    {
+      output[i] = -1;
+      continue;
+    }
     output[i] = (((toupper(input[i]) - 'A') % 26) + 26) % 26;
   }
   return output;
