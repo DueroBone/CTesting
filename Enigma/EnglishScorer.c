@@ -30,6 +30,9 @@ const float bigram_table[26][26] = {
     {0.00023770, 0.00000617, 0.00000370, 0.00000185, 0.00025560, 0.00000062, 0.00000154, 0.00000803, 0.00018491, 0.00000031, 0.00000309, 0.00000185, 0.00000401, 0.00000247, 0.00003272, 0.00001667, 0.00000000, 0.00004137, 0.00000587, 0.00001574, 0.00001482, 0.00000000, 0.00000741, 0.00000000, 0.00000000, 0.00007100},
 };
 
+const float IOC_table[26] = {};
+
+
 BigramScore calculateBigramScore(const int *text, int length, EnigmaMachineCompressed config)
 {
   float score = 0.0;
@@ -48,3 +51,6 @@ BigramScore calculateBigramScore(const int *text, int length, EnigmaMachineCompr
   result.config = config;
   return result;
 }
+
+
+// IOCScore calculateIncedenceScore(const int *text, int length, EnigmaMachineCompressed config)

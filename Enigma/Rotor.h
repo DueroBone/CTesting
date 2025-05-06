@@ -6,6 +6,7 @@ typedef struct
 {
   int position;
   int notchPositon;
+  int ringPosition;
   int rotorNum;
   bool isNotch;
   uint8_t wirings[26][2];
