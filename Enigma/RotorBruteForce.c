@@ -52,7 +52,7 @@ RotorBruteForceResult rotorBruteForce(EnigmaMachine *machine, int *input, int le
         memcpy(output, input, sizeof(int) * length);
         output = runEnigmaMachine(machine, output, length);
         setRotorPositions(machine, i, j, k);
-        BigramScore score = calculateBigramScore(output, length, compressEnigmaMachine(machine));
+        EnglishScore score = calculateBigramScore(output, length, compressEnigmaMachine(machine));
         int newOutput[length];
         for (int l = 0; l < length; l++)
         {
@@ -73,7 +73,7 @@ RotorBruteForceResult rotorBruteForce(EnigmaMachine *machine, int *input, int le
               result.scores[m] = result.scores[m - 1];
               copyConfig(&result.scores[m].config, &result.scores[m - 1].config);
             }
-            memcpy(&result.scores[l], &score, sizeof(BigramScore));
+            memcpy(&result.scores[l], &score, sizeof(EnglishScore));
             break;
           }
         }

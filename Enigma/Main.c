@@ -14,23 +14,23 @@
 int main()
 {
   EnigmaMachine *machine = generateMachine(
-      generateRotor(1, 0),
-      generateRotor(2, 0),
       generateRotor(3, 0),
-      generateReflector(0),
+      generateRotor(2, 0),
+      generateRotor(1, 0),
+      generateReflector(1),
       generateEmptyPlugboard()
       // generatePlugboard((int[10][2]){{0, 1}, {2, 3}, {4, 5}, {6, 7}, {8, 9}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}}) // Example plugboard wiring
   );
 
   FILE *file = fopen("bible.txt", "r");
-  int length = 60000;
-  char *input = malloc(length * sizeof(char));
-  fgets(input, length * sizeof(char), file);
+  // int length = 60000;
+  // char *input = malloc(length * sizeof(char));
+  // fgets(input, length * sizeof(char), file);
   fclose(file);
 
   // charArrToIntArr(input, strlen(input));
   // char input[100] = "The quick brown fox jumps over the lazy dog";
-  // char input[60] = "hello world";
+  char input[60] = "hello world"; // evonz yqpoq // ilbda amtaz //
   // printf("Enter text to encrypt: ");
   // fgets(input, sizeof(input), stdin);
   // Remove newline character from input

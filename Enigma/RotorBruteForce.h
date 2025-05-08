@@ -9,7 +9,7 @@ static const int numSaved = 3;
 typedef struct
 {
   int numResults;
-  BigramScore scores[numSaved];
+  EnglishScore scores[numSaved];
 } RotorBruteForceResult;
 
 RotorBruteForceResult rotorBruteForce(EnigmaMachine *machine, int *input, int length);

@@ -5,6 +5,6 @@ typedef struct
 {
   float score;
   EnigmaMachineCompressed config;
-} BigramScore;
+} EnglishScore;
 
-BigramScore calculateBigramScore(const int *text, int length, EnigmaMachineCompressed config);
+EnglishScore calculateBigramScore(const int *text, int length, EnigmaMachineCompressed config);

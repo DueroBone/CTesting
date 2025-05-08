@@ -32,8 +32,7 @@ const float bigram_table[26][26] = {
 
 const float IOC_table[26] = {};
 
-
-BigramScore calculateBigramScore(const int *text, int length, EnigmaMachineCompressed config)
+EnglishScore calculateBigramScore(const int *text, int length, EnigmaMachineCompressed config)
 {
   float score = 0.0;
   for (int i = 0; i < (length - 1); i++)
@@ -46,11 +45,33 @@ BigramScore calculateBigramScore(const int *text, int length, EnigmaMachineCompr
     }
   }
   score = score / (length - 1) * 10000;
-  BigramScore result;
+  EnglishScore result;
   result.score = score;
   result.config = config;
   return result;
 }
 
-
-// IOCScore calculateIncedenceScore(const int *text, int length, EnigmaMachineCompressed config)
+const float expectedIOC = 0.0686;
+/** Low score better */
+EnglishScore calculateIncedenceScore(const int *text, int length, EnigmaMachineCompressed config)
+{
+  int letter_count[26] = {0};
+  for (int i = 0; i < length; i++)
+  {
+    int char_index = text[i];
+    if (char_index >= 0 && char_index < 26)
+    {
+      letter_count[char_index]++;
+    }
+  }
+  float score = 0.0;
+  for (int i = 0; i < 26; i++)
+  {
+    score += letter_count[i] * (letter_count[i] - 1);
+  }
+  score = score / (length * (length - 1));
+  EnglishScore result;
+  result.score = score - expectedIOC;
+  result.config = config;
+  return result;
+}
