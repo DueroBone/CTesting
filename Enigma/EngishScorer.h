@@ -8,3 +8,4 @@ typedef struct
 } EnglishScore;
 
 EnglishScore calculateBigramScore(const int *text, int length, EnigmaMachineCompressed config);
+EnglishScore calculateIncedenceScore(const int *text, int length, EnigmaMachineCompressed config);

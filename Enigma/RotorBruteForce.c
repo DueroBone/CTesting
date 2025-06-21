@@ -24,11 +24,15 @@ void copyConfig(EnigmaMachineCompressed *dest, EnigmaMachineCompressed *src)
 // static const int numSaved = 10;
 
 /** NOT THREAD SAFE, OPERATES ON SIMGLE MACHINE */
-RotorBruteForceResult rotorBruteForce(EnigmaMachine *machine, int *input, int length)
+RotorBruteForceResult rotorSettingBruteForce(EnigmaMachine *machine, int *input, int length)
 {
   // Runs the machine with set plugboard configuration, all rotor positions
   RotorBruteForceResult result = {0};
   result.numResults = numSaved;
+  for (int i = 0; i < numSaved; i++)
+  {
+    result.scores[i].score = -100;
+  }
   int newInput[length];
   for (int i = 0; i < length; i++)
   {
@@ -52,7 +56,8 @@ RotorBruteForceResult rotorBruteForce(EnigmaMachine *machine, int *input, int le
         memcpy(output, input, sizeof(int) * length);
         output = runEnigmaMachine(machine, output, length);
         setRotorPositions(machine, i, j, k);
-        EnglishScore score = calculateBigramScore(output, length, compressEnigmaMachine(machine));
+        EnglishScore score = calculateIncedenceScore(output, length, compressEnigmaMachine(machine));
+        // EnglishScore score = calculateBigramScore(output, length, compressEnigmaMachine(machine));
         int newOutput[length];
         for (int l = 0; l < length; l++)
         {
@@ -61,7 +66,7 @@ RotorBruteForceResult rotorBruteForce(EnigmaMachine *machine, int *input, int le
         free(output);
         if (score.score < result.scores[numSaved - 1].score)
         {
-          continue; // Skip if score is not better than the worst saved
+          // continue; // Skip if score is not better than the worst saved
         }
         for (int l = 0; l < numSaved; l++)
         {
@@ -84,6 +89,12 @@ RotorBruteForceResult rotorBruteForce(EnigmaMachine *machine, int *input, int le
   return result;
 }
 
+RotorBruteForceResult rotorNumBruteForce(int *input, int length)
+{
+  RotorBruteForceResult result = {0};
+  return result;
+}
+
 char **testResults(RotorBruteForceResult result, int *textInput, int length)
 {
   char **results = malloc(numSaved * sizeof(char *));
@@ -92,16 +103,17 @@ char **testResults(RotorBruteForceResult result, int *textInput, int length)
     fprintf(stderr, "Memory allocation failed\n");
     return NULL;
   }
+  const int pretextLength = 500;
   for (int i = 0; i < numSaved; i++)
   {
-    results[i] = malloc((500 + length) * sizeof(char)); // TODO: Check how large this needs to be
+    results[i] = malloc((pretextLength + length) * sizeof(char)); // TODO: Check how large this needs to be
     if (results[i] == NULL)
     {
       fprintf(stderr, "Memory allocation failed\n");
       return NULL;
     }
 
-    snprintf(results[i], 500, "Score: %f\nRotor1: %d@%d\nRotor2: %d@%d\nRotor3: %d@%d\nReflector: %d\nPlugboard: %s\nOutput: %s\n",
+    snprintf(results[i], pretextLength, "Score: %f\nRotor1: %d@%d\nRotor2: %d@%d\nRotor3: %d@%d\nReflector: %d\nPlugboard: %s\nOutput: %s\n",
              result.scores[i].score,
              result.scores[i].config.rotor1,
              result.scores[i].config.rotor1Pos,

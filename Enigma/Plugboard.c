@@ -51,3 +51,23 @@ int getPlugboardOutput(Plugboard *plugboard, int input)
   }
   return input;
 }
+
+char *plugboardToString(Plugboard *plugboard)
+{
+  char *result = malloc(100 * sizeof(char)); // Adjust size as needed
+  if (result == NULL)
+  {
+    fprintf(stderr, "Memory allocation failed\n");
+    return NULL;
+  }
+  int index = 0;
+  for (int i = 0; i < 10; i++)
+  {
+    if (plugboard->wiring[i][0] != -1 && plugboard->wiring[i][1] != -1)
+    {
+      index += snprintf(result + index, 100 - index, "%d=%d ", plugboard->wiring[i][0], plugboard->wiring[i][1]);
+    }
+  }
+  result[index] = '\0'; // Null-terminate the string
+  return result;
+}

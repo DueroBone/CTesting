@@ -10,3 +10,4 @@ Plugboard generateEmptyPlugboard();
 Plugboard generatePlugboard(int wiring[10][2]);
 void freePlugboard(Plugboard *plugboard);
 int getPlugboardOutput(Plugboard *plugboard, int input);
+char *plugboardToString(Plugboard *plugboard);

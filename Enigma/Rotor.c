@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "Rotor.h"
+#include "Settings.h"
 
 const static int rotorWirings[][26] = {
     // E K M F L G D Q V Z N T O W Y H X U S P A I B R C J
@@ -19,9 +20,12 @@ int getRotorOutput(Rotor *rotor, int input, int isReverse)
 {
   int adjustedInput = (input + rotor->position) % 26;
 
-  if (adjustedInput < 0)
+  if (allowChecks)
   {
-    printf("Adjusted input is negative: %d  in:%d  pos:%d\n", adjustedInput, input, rotor->position);
+    if (adjustedInput < 0)
+    {
+      printf("Adjusted input is negative: %d  in:%d  pos:%d\n", adjustedInput, input, rotor->position);
+    }
   }
 
   int output = rotor->wirings[adjustedInput][isReverse];
@@ -75,10 +79,13 @@ char *rotorToString(Rotor *rotor)
 Rotor generateRotor(int rotorNum, int startingOffset)
 {
   Rotor rotor;
-  if (rotorNum < 1 || rotorNum > 3)
+  if (allowChecks)
   {
-    fprintf(stderr, "Invalid rotor number: %d, RETURNING ROTOR I\n", rotorNum);
-    return generateRotor(1, 0);
+    if (rotorNum < 1 || rotorNum > 3)
+    {
+      fprintf(stderr, "Invalid rotor number: %d, RETURNING ROTOR I\n", rotorNum);
+      return generateRotor(1, 0);
+    }
   }
 
   rotor.rotorNum = rotorNum;
@@ -95,10 +102,6 @@ Rotor generateRotor(int rotorNum, int startingOffset)
         rotor.wirings[i][1] = j;
         break;
       }
-    }
-    if (j == 26)
-    {
-      fprintf(stderr, "Invalid wiring for rotor %d\n", rotorNum);
     }
   }
 

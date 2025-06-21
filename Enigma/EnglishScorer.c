@@ -1,5 +1,6 @@
 #include "EngishScorer.h"
 #include "EnigmaMachine.h"
+#include "Settings.h"
 
 const float bigram_table[26][26] = {
     {0.00060473, 0.00188520, 0.00219760, 0.00248284, 0.00089336, 0.00080322, 0.00131072, 0.00157805, 0.00426864, 0.00003828, 0.00163855, 0.00854962, 0.00350770, 0.02373032, 0.00012903, 0.00087886, 0.00000525, 0.00666874, 0.00584545, 0.01014959, 0.00108259, 0.00257267, 0.00097609, 0.00004569, 0.00305145, 0.00022133},
@@ -30,8 +31,7 @@ const float bigram_table[26][26] = {
     {0.00023770, 0.00000617, 0.00000370, 0.00000185, 0.00025560, 0.00000062, 0.00000154, 0.00000803, 0.00018491, 0.00000031, 0.00000309, 0.00000185, 0.00000401, 0.00000247, 0.00003272, 0.00001667, 0.00000000, 0.00004137, 0.00000587, 0.00001574, 0.00001482, 0.00000000, 0.00000741, 0.00000000, 0.00000000, 0.00007100},
 };
 
-const float IOC_table[26] = {};
-
+/** High score better, nearly 0-100 */
 EnglishScore calculateBigramScore(const int *text, int length, EnigmaMachineCompressed config)
 {
   float score = 0.0;
@@ -50,9 +50,21 @@ EnglishScore calculateBigramScore(const int *text, int length, EnigmaMachineComp
   result.config = config;
   return result;
 }
+static float make_negative(float x)
+{
+  union
+  {
+    float f;
+    uint32_t i;
+  } u;
 
-const float expectedIOC = 0.0686;
-/** Low score better */
+  u.f = x;
+  u.i |= 0x80000000; // Set the sign bit
+  return u.f;
+}
+
+const static float expectedIOC = 0.0686;
+/** High (closer to zero) score better */
 EnglishScore calculateIncedenceScore(const int *text, int length, EnigmaMachineCompressed config)
 {
   int letter_count[26] = {0};
@@ -64,6 +76,7 @@ EnglishScore calculateIncedenceScore(const int *text, int length, EnigmaMachineC
       letter_count[char_index]++;
     }
   }
+
   float score = 0.0;
   for (int i = 0; i < 26; i++)
   {
@@ -72,6 +85,7 @@ EnglishScore calculateIncedenceScore(const int *text, int length, EnigmaMachineC
   score = score / (length * (length - 1));
   EnglishScore result;
   result.score = score - expectedIOC;
+  result.score = make_negative(result.score);
   result.config = config;
   return result;
 }

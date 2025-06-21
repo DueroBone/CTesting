@@ -1,10 +1,19 @@
 #include "stdlib.h"
 #include "stdio.h"
 #include <ctype.h>
+#include "Settings.h"
 
 char *intArrToCharArr(int *input, int length)
 {
   char *output = malloc(sizeof(char) * (length + 1));
+  if (allowChecks)
+  {
+    if (output == NULL)
+    {
+      fprintf(stderr, "Memory allocation failed\n");
+      return NULL;
+    }
+  }
   for (int i = 0; i < length; i++)
   {
     if (input[i] == -1)
@@ -22,10 +31,13 @@ char *intArrToCharArr(int *input, int length)
 int *charArrToIntArr(char *input, int length)
 {
   int *output = malloc(sizeof(int) * length);
-  if (output == NULL)
+  if (allowChecks)
   {
-    fprintf(stderr, "Memory allocation failed\n");
-    return NULL;
+    if (output == NULL)
+    {
+      fprintf(stderr, "Memory allocation failed\n");
+      return NULL;
+    }
   }
   for (int i = 0; i < length; i++)
   {

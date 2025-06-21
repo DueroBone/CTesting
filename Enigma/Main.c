@@ -14,23 +14,24 @@
 int main()
 {
   EnigmaMachine *machine = generateMachine(
-      generateRotor(3, 0),
+      generateRotor(1, 11),
       generateRotor(2, 0),
-      generateRotor(1, 0),
+      generateRotor(3, 1),
       generateReflector(1),
       generateEmptyPlugboard()
       // generatePlugboard((int[10][2]){{0, 1}, {2, 3}, {4, 5}, {6, 7}, {8, 9}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}}) // Example plugboard wiring
   );
 
   FILE *file = fopen("bible.txt", "r");
-  // int length = 60000;
-  // char *input = malloc(length * sizeof(char));
-  // fgets(input, length * sizeof(char), file);
+  int length = 5000;
+  char *input = malloc(length * sizeof(char));
+  fgets(input, length * sizeof(char), file);
   fclose(file);
 
   // charArrToIntArr(input, strlen(input));
   // char input[100] = "The quick brown fox jumps over the lazy dog";
-  char input[60] = "hello world"; // evonz yqpoq // ilbda amtaz //
+  // char input[100] = "bibleshallthelord";
+  // char input[60] = "hello world"; // evonz yqpoq // ilbda amtaz //
   // printf("Enter text to encrypt: ");
   // fgets(input, sizeof(input), stdin);
   // Remove newline character from input
@@ -40,15 +41,17 @@ int main()
     input[len - 1] = '\0';
     len--;
   }
+  len = 500;
 
   char *output = runEnigmaMachineChar(machine, input);
   printf("Encrypted text: %s\n\n", output);
   // continue;
   clock_t start_time = clock();
-  RotorBruteForceResult result = rotorBruteForce(machine, charArrToIntArr(output, len), len);
+  // strcpy(output, "tudav vqqpa");
+  RotorBruteForceResult result = rotorSettingBruteForce(machine, charArrToIntArr(output, len), len);
   clock_t end_time = clock();
   double timeTaken = (double)(end_time - start_time) / CLOCKS_PER_SEC;
-  printf("Time taken for brute force: %f seconds\n", timeTaken);
+  printf("Time taken for brute force: %f seconds proccessing %zu chars\n", timeTaken, len);
 
   printf("Rotor Brute Force Results:\n");
   char **resultsText = testResults(result, charArrToIntArr(output, len), len);
