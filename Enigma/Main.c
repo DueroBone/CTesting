@@ -14,16 +14,19 @@
 int main()
 {
   EnigmaMachine *machine = generateMachine(
-      generateRotor(1, 11),
+      generateRotor(1, 0),
       generateRotor(2, 0),
-      generateRotor(3, 1),
+      generateRotor(3, 0),
       generateReflector(1),
       generateEmptyPlugboard()
-      // generatePlugboard((int[10][2]){{0, 1}, {2, 3}, {4, 5}, {6, 7}, {8, 9}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}}) // Example plugboard wiring
+      // generatePlugboard((int[10][2]){{0, 1}, {2, 3}, {4, 5}, {6, 7}, {8, 9}, {10, 11}, {12, 13}, {14, 15}, {16, 17}, {18, 19}})
+      // generatePlugboard((int[10][2]){{0, 1}, {2, 3}, {4, 5}, {6, 7}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}, {-1, -1}})
   );
 
-  FILE *file = fopen("bible.txt", "r");
-  int length = 5000;
+  // FILE *file = fopen("bible.txt", "r");
+  FILE *file = fopen("potter.txt", "r");
+  int length = 20000;
+  length += 1; // For null terminator
   char *input = malloc(length * sizeof(char));
   fgets(input, length * sizeof(char), file);
   fclose(file);
@@ -41,23 +44,23 @@ int main()
     input[len - 1] = '\0';
     len--;
   }
-  len = 500;
 
   char *output = runEnigmaMachineChar(machine, input);
   printf("Encrypted text: %s\n\n", output);
   // continue;
   clock_t start_time = clock();
   // strcpy(output, "tudav vqqpa");
-  RotorBruteForceResult result = rotorSettingBruteForce(machine, charArrToIntArr(output, len), len);
+  RotorBruteForceResult result = fullRotorBruteForce(charArrToIntArr(output, len), len);
+  // RotorBruteForceResult result = rotorSettingBruteForce(machine, charArrToIntArr(output, len), len);
   clock_t end_time = clock();
   double timeTaken = (double)(end_time - start_time) / CLOCKS_PER_SEC;
   printf("Time taken for brute force: %f seconds proccessing %zu chars\n", timeTaken, len);
 
   printf("Rotor Brute Force Results:\n");
-  char **resultsText = testResults(result, charArrToIntArr(output, len), len);
+  char **resultsText = testResults(result, charArrToIntArr(output, len), 150);
   for (int i = 0; i < result.numResults; i++)
   {
-    printf("Result %d: %s\n\n", i + 1, resultsText[i]);
+    printf("Result %d: %s\n", i + 1, resultsText[i]);
     free(resultsText[i]);
   }
   free(resultsText);

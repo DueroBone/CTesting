@@ -75,6 +75,26 @@ int *runEnigmaMachine(EnigmaMachine *machine, int *input, int length)
     {
       continue;
     }
+    if (proccessInChars)
+    {
+      input[i] = toUpper(input[i]) - 'A';
+      if (allowChecks)
+      {
+        if (input[i] < 0 || input[i] > 25)
+        {
+          fprintf(stderr, "Invalid input character: %c at index %d became %d\n", input[i] + 'A', i, input[i]);
+          // exit(EXIT_FAILURE);
+        }
+      }
+    }
+    if (allowChecks)
+    {
+      if (input[i] < 0 || input[i] > 25)
+      {
+        fprintf(stderr, "Invalid input value: %d at index %d\n", input[i], i);
+        // exit(EXIT_FAILURE);
+      }
+    }
     input[i] = getPlugboardOutput(&machine->plugboard, input[i]);
     input[i] = getRotorOutput(&machine->rotors[0], input[i], 0);
     input[i] = getRotorOutput(&machine->rotors[1], input[i], 0);
@@ -85,6 +105,10 @@ int *runEnigmaMachine(EnigmaMachine *machine, int *input, int length)
     input[i] = getRotorOutput(&machine->rotors[0], input[i], 1);
     input[i] = getPlugboardOutput(&machine->plugboard, input[i]);
     rotateRotors(machine);
+    if (proccessInChars)
+    {
+      input[i] += 'A';
+    }
   }
   return input;
 }
@@ -122,7 +146,7 @@ char *machineToString(EnigmaMachine *machine)
            rotorToString(&machine->rotors[1]),
            rotorToString(&machine->rotors[2]),
            machine->reflector.reflectorNum,
-           plugboardToString(&machine->plugboard)); // TODO: Add plugboard details
+           plugboardToString(&machine->plugboard));
   return result;
 }
 

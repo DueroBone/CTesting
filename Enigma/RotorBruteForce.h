@@ -12,4 +12,5 @@ typedef struct
 } RotorBruteForceResult;
 
 RotorBruteForceResult rotorSettingBruteForce(EnigmaMachine *machine, int *input, int length);
+RotorBruteForceResult fullRotorBruteForce(int *input, int length);
 char **testResults(RotorBruteForceResult result, int *textInput, int length);

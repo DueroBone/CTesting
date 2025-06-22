@@ -21,7 +21,14 @@ char *intArrToCharArr(int *input, int length)
       output[i] = ' ';
       continue;
     }
-    output[i] = input[i] + 'A';
+    if (proccessInChars)
+    {
+      output[i] = input[i];
+    }
+    else
+    {
+      output[i] = input[i] + 'A';
+    }
   }
   output[length] = '\0';
   return output;
@@ -46,7 +53,14 @@ int *charArrToIntArr(char *input, int length)
       output[i] = -1;
       continue;
     }
-    output[i] = (((toupper(input[i]) - 'A') % 26) + 26) % 26;
+    if (proccessInChars)
+    {
+      output[i] = input[i];
+    }
+    else
+    {
+      output[i] = (((toupper(input[i]) - 'A') % 26) + 26) % 26;
+    }
   }
   return output;
 }

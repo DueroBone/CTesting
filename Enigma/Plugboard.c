@@ -71,3 +71,27 @@ char *plugboardToString(Plugboard *plugboard)
   result[index] = '\0'; // Null-terminate the string
   return result;
 }
+
+char *compressedPlugboardToString(int8_t plugboard[10][2])
+{
+  char *result = malloc(100 * sizeof(char)); // Adjust size as needed
+  if (result == NULL)
+  {
+    fprintf(stderr, "Memory allocation failed\n");
+    return NULL;
+  }
+  int index = 0;
+  for (int i = 0; i < 10; i++)
+  {
+    if (plugboard[i][0] != -1 && plugboard[i][1] != -1)
+    {
+      index += snprintf(result + index, 100 - index, "%d=%d ", plugboard[i][0], plugboard[i][1]);
+    }
+    else
+    {
+      index += snprintf(result + index, 100 - index, "_=_ ");
+    }
+  }
+  result[index] = '\0'; // Null-terminate the string
+  return result;
+}

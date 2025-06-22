@@ -19,7 +19,9 @@
     "__locale": "c",
     "cctype": "c",
     "enigmamachine.h": "c",
-    "__node_handle": "c"
+    "__node_handle": "c",
+    "formatter.h": "c",
+    "rotorbruteforce.h": "c"
   },
   "C_Cpp.errorSquiggles": "enabled"
 }

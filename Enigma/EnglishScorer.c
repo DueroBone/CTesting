@@ -39,6 +39,12 @@ EnglishScore calculateBigramScore(const int *text, int length, EnigmaMachineComp
   {
     int first_char = text[i];
     int second_char = text[i + 1];
+    if (proccessInChars)
+    {
+      first_char = (first_char - 'A') % 26;
+      second_char = (second_char - 'A') % 26;
+    }
+
     if (first_char >= 0 && first_char < 26 && second_char >= 0 && second_char < 26)
     {
       score += bigram_table[first_char][second_char];
@@ -50,12 +56,13 @@ EnglishScore calculateBigramScore(const int *text, int length, EnigmaMachineComp
   result.config = config;
   return result;
 }
+
 static float make_negative(float x)
 {
   union
   {
     float f;
-    uint32_t i;
+    int i;
   } u;
 
   u.f = x;
@@ -63,7 +70,8 @@ static float make_negative(float x)
   return u.f;
 }
 
-const static float expectedIOC = 0.0686;
+// const static float expectedIOC = 0.0686;
+const static float expectedIOC = 0.044782;
 /** High (closer to zero) score better */
 EnglishScore calculateIncedenceScore(const int *text, int length, EnigmaMachineCompressed config)
 {
@@ -71,6 +79,10 @@ EnglishScore calculateIncedenceScore(const int *text, int length, EnigmaMachineC
   for (int i = 0; i < length; i++)
   {
     int char_index = text[i];
+    if (proccessInChars)
+    {
+      char_index = (char_index - 'A') % 26;
+    }
     if (char_index >= 0 && char_index < 26)
     {
       letter_count[char_index]++;
@@ -82,9 +94,11 @@ EnglishScore calculateIncedenceScore(const int *text, int length, EnigmaMachineC
   {
     score += letter_count[i] * (letter_count[i] - 1);
   }
-  score = score / (length * (length - 1));
+  score /= (length * (length - 1));
+  score -= expectedIOC;
+  score *= 1000;
   EnglishScore result;
-  result.score = score - expectedIOC;
+  result.score = score;
   result.score = make_negative(result.score);
   result.config = config;
   return result;

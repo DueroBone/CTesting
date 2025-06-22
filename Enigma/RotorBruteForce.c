@@ -1,5 +1,6 @@
 #include "RotorBruteForce.h"
 #include "EnigmaMachine.h"
+#include "Plugboard.h"
 #include "Formatter.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -19,6 +20,28 @@ void copyConfig(EnigmaMachineCompressed *dest, EnigmaMachineCompressed *src)
   dest->rotor1Pos = src->rotor1Pos;
   dest->rotor2Pos = src->rotor2Pos;
   dest->rotor3Pos = src->rotor3Pos;
+}
+
+void addScoresToResults(RotorBruteForceResult *result, EnglishScore *score)
+{
+  if (score->score < result->scores[numSaved - 1].score)
+  {
+    // continue; // Skip if score is not better than the worst saved
+  }
+  for (int l = 0; l < numSaved; l++)
+  {
+    if (result->scores[l].score < score->score)
+    {
+      // Shift scores down
+      for (int m = numSaved - 1; m > l; m--)
+      {
+        result->scores[m] = result->scores[m - 1];
+        copyConfig(&result->scores[m].config, &result->scores[m - 1].config);
+      }
+      memcpy(&result->scores[l], score, sizeof(EnglishScore));
+      break;
+    }
+  }
 }
 
 // static const int numSaved = 10;
@@ -46,6 +69,7 @@ RotorBruteForceResult rotorSettingBruteForce(EnigmaMachine *machine, int *input,
       for (int k = 0; k < 26; k++)
       {
         setRotorPositions(machine, i, j, k);
+
         // copy input
         int *output = malloc(sizeof(int) * length);
         if (output == NULL)
@@ -58,30 +82,13 @@ RotorBruteForceResult rotorSettingBruteForce(EnigmaMachine *machine, int *input,
         setRotorPositions(machine, i, j, k);
         EnglishScore score = calculateIncedenceScore(output, length, compressEnigmaMachine(machine));
         // EnglishScore score = calculateBigramScore(output, length, compressEnigmaMachine(machine));
-        int newOutput[length];
-        for (int l = 0; l < length; l++)
+
+        if (machine->rotors[0].rotorNum == 1 && machine->rotors[1].rotorNum == 2 && machine->rotors[2].rotorNum == 3 && machine->reflector.reflectorNum == 1 && machine->rotors[0].position == 0 && machine->rotors[1].position == 0 && machine->rotors[2].position == 0)
         {
-          newOutput[l] = output[l];
+          printf(" "); // Add breakpoint here
         }
         free(output);
-        if (score.score < result.scores[numSaved - 1].score)
-        {
-          // continue; // Skip if score is not better than the worst saved
-        }
-        for (int l = 0; l < numSaved; l++)
-        {
-          if (result.scores[l].score < score.score)
-          {
-            // Shift scores down
-            for (int m = numSaved - 1; m > l; m--)
-            {
-              result.scores[m] = result.scores[m - 1];
-              copyConfig(&result.scores[m].config, &result.scores[m - 1].config);
-            }
-            memcpy(&result.scores[l], &score, sizeof(EnglishScore));
-            break;
-          }
-        }
+        addScoresToResults(&result, &score);
       }
     }
   }
@@ -89,10 +96,61 @@ RotorBruteForceResult rotorSettingBruteForce(EnigmaMachine *machine, int *input,
   return result;
 }
 
-RotorBruteForceResult rotorNumBruteForce(int *input, int length)
+static int factorial(int n)
 {
-  RotorBruteForceResult result = {0};
-  return result;
+  if (n <= 1)
+    return 1;
+  return n * factorial(n - 1);
+}
+
+RotorBruteForceResult fullRotorBruteForce(int *input, int length)
+{
+  // const int numRotors = 3;
+  const int numReflectors = 2;
+  const int numCombinations = 6;
+  const int rotorCombinations[][3] = {
+      {1, 2, 3},
+      {1, 3, 2},
+      {2, 1, 3},
+      {2, 3, 1},
+      {3, 1, 2},
+      {3, 2, 1}};
+
+  const int numToTry = numCombinations * numReflectors;
+  RotorBruteForceResult resultsList[numToTry];
+
+#pragma omp parallel for
+  for (int i = 0; i < numToTry; i++)
+  {
+    Rotor rotor1 = generateRotor(rotorCombinations[i % numCombinations][0], 0);
+    Rotor rotor2 = generateRotor(rotorCombinations[i % numCombinations][1], 0);
+    Rotor rotor3 = generateRotor(rotorCombinations[i % numCombinations][2], 0);
+    Reflector reflector = generateReflector(i / numCombinations);
+    Plugboard plugboard = generateEmptyPlugboard(); // Assuming empty plugboard as IOC is uneffected by plugboard
+
+    EnigmaMachine *tempMachine = generateMachine(rotor1, rotor2, rotor3, reflector, plugboard);
+    RotorBruteForceResult result = rotorSettingBruteForce(tempMachine, input, length);
+    freeEnigmaMachine(tempMachine);
+
+    resultsList[i] = result;
+  }
+
+  RotorBruteForceResult combinedResult = {0};
+  combinedResult.numResults = numSaved;
+  for (int i = 0; i < numSaved; i++)
+  {
+    combinedResult.scores[i].score = -100;
+  }
+
+  for (int i = 0; i < numToTry; i++)
+  {
+    for (int j = 0; j < numSaved; j++)
+    {
+      addScoresToResults(&combinedResult, &resultsList[i].scores[j]);
+    }
+  }
+
+  return combinedResult;
 }
 
 char **testResults(RotorBruteForceResult result, int *textInput, int length)
@@ -103,17 +161,17 @@ char **testResults(RotorBruteForceResult result, int *textInput, int length)
     fprintf(stderr, "Memory allocation failed\n");
     return NULL;
   }
-  const int pretextLength = 500;
+  const int pretextLength = 150;
   for (int i = 0; i < numSaved; i++)
   {
-    results[i] = malloc((pretextLength + length) * sizeof(char)); // TODO: Check how large this needs to be
+    results[i] = malloc((pretextLength + length) * sizeof(char));
     if (results[i] == NULL)
     {
       fprintf(stderr, "Memory allocation failed\n");
       return NULL;
     }
 
-    snprintf(results[i], pretextLength, "Score: %f\nRotor1: %d@%d\nRotor2: %d@%d\nRotor3: %d@%d\nReflector: %d\nPlugboard: %s\nOutput: %s\n",
+    snprintf(results[i], pretextLength + length, "Score: %.12f\nRotor1: %d@%d\nRotor2: %d@%d\nRotor3: %d@%d\nReflector: %d\nPlugboard: %s\nOutput: %s\n",
              result.scores[i].score,
              result.scores[i].config.rotor1,
              result.scores[i].config.rotor1Pos,
@@ -122,7 +180,7 @@ char **testResults(RotorBruteForceResult result, int *textInput, int length)
              result.scores[i].config.rotor3,
              result.scores[i].config.rotor3Pos,
              result.scores[i].config.reflector,
-             "Plugboard TBD", // TODO: Add plugboard details
+             compressedPlugboardToString(result.scores[i].config.plugboard),
              intArrToCharArr(runEnigmaMachine(decompressEnigmaMachine(&result.scores[i].config), textInput, length), length));
   }
   return results;
