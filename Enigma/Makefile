@@ -4,7 +4,7 @@ SRC = $(wildcard *.c)
 OUT = Enigma
 
 # Default flags   -Werror
-CFLAGS = -O2 -Wall  -fcolor-diagnostics -fansi-escape-codes -Xpreprocessor -fopenmp
+CFLAGS = -O0 -Wall  -fcolor-diagnostics -fansi-escape-codes -Xpreprocessor -fopenmp
 INCLUDES = -I/usr/local/Cellar/libomp/20.1.3/include/
 LIBS = -L/usr/local/Cellar/libomp/20.1.3/lib/ -lomp
 

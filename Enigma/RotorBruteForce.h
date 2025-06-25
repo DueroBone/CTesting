@@ -9,8 +9,9 @@ typedef struct
 {
   int numResults;
   EnglishScore scores[numSaved];
-} RotorBruteForceResult;
+} BruteForceResult;
 
-RotorBruteForceResult rotorSettingBruteForce(EnigmaMachine *machine, int *input, int length);
-RotorBruteForceResult fullRotorBruteForce(int *input, int length);
-char **testResults(RotorBruteForceResult result, int *textInput, int length);
+BruteForceResult rotorSettingBruteForce(EnigmaMachine *machine, int *input, int length);
+BruteForceResult fullRotorBruteForce(Plugboard *plugboard, int *input, int length);
+char **testResults(BruteForceResult result, int *textInput, int length);
+BruteForceResult plugboardBruteForce(Plugboard *plugboard, int *input, int length);

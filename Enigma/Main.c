@@ -25,7 +25,7 @@ int main()
 
   // FILE *file = fopen("bible.txt", "r");
   FILE *file = fopen("potter.txt", "r");
-  int length = 20000;
+  int length = 1000;
   length += 1; // For null terminator
   char *input = malloc(length * sizeof(char));
   fgets(input, length * sizeof(char), file);
@@ -50,8 +50,9 @@ int main()
   // continue;
   clock_t start_time = clock();
   // strcpy(output, "tudav vqqpa");
-  RotorBruteForceResult result = fullRotorBruteForce(charArrToIntArr(output, len), len);
-  // RotorBruteForceResult result = rotorSettingBruteForce(machine, charArrToIntArr(output, len), len);
+  // BruteForceResult result = fullRotorBruteForce(NULL, charArrToIntArr(output, len), len);
+  // BruteForceResult result = rotorSettingBruteForce(machine, charArrToIntArr(output, len), len);
+  BruteForceResult result = plugboardBruteForce(NULL, charArrToIntArr(output, len), len);
   clock_t end_time = clock();
   double timeTaken = (double)(end_time - start_time) / CLOCKS_PER_SEC;
   printf("Time taken for brute force: %f seconds proccessing %zu chars\n", timeTaken, len);

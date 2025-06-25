@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <string.h>
 
-void copyConfig(EnigmaMachineCompressed *dest, EnigmaMachineCompressed *src)
+static void copyConfig(EnigmaMachineCompressed *dest, EnigmaMachineCompressed *src)
 {
   for (int i = 0; i < 10; i++)
   {
@@ -22,7 +22,7 @@ void copyConfig(EnigmaMachineCompressed *dest, EnigmaMachineCompressed *src)
   dest->rotor3Pos = src->rotor3Pos;
 }
 
-void addScoresToResults(RotorBruteForceResult *result, EnglishScore *score)
+static void addScoresToResults(BruteForceResult *result, EnglishScore *score)
 {
   if (score->score < result->scores[numSaved - 1].score)
   {
@@ -47,10 +47,10 @@ void addScoresToResults(RotorBruteForceResult *result, EnglishScore *score)
 // static const int numSaved = 10;
 
 /** NOT THREAD SAFE, OPERATES ON SIMGLE MACHINE */
-RotorBruteForceResult rotorSettingBruteForce(EnigmaMachine *machine, int *input, int length)
+BruteForceResult rotorSettingBruteForce(EnigmaMachine *machine, int *input, int length)
 {
   // Runs the machine with set plugboard configuration, all rotor positions
-  RotorBruteForceResult result = {0};
+  BruteForceResult result = {0};
   result.numResults = numSaved;
   for (int i = 0; i < numSaved; i++)
   {
@@ -96,14 +96,7 @@ RotorBruteForceResult rotorSettingBruteForce(EnigmaMachine *machine, int *input,
   return result;
 }
 
-static int factorial(int n)
-{
-  if (n <= 1)
-    return 1;
-  return n * factorial(n - 1);
-}
-
-RotorBruteForceResult fullRotorBruteForce(int *input, int length)
+BruteForceResult fullRotorBruteForce(Plugboard *plugboard, int *input, int length)
 {
   // const int numRotors = 3;
   const int numReflectors = 2;
@@ -117,7 +110,20 @@ RotorBruteForceResult fullRotorBruteForce(int *input, int length)
       {3, 2, 1}};
 
   const int numToTry = numCombinations * numReflectors;
-  RotorBruteForceResult resultsList[numToTry];
+  BruteForceResult resultsList[numToTry];
+
+  if (plugboard == NULL)
+  {
+    Plugboard *p = malloc(sizeof(Plugboard));
+    if (p == NULL)
+    {
+      fprintf(stderr, "Memory allocation failed\n");
+      return (BruteForceResult){0};
+    }
+    Plugboard temp = generateEmptyPlugboard();
+    memcpy(p, &temp, sizeof(Plugboard));
+    plugboard = p;
+  }
 
 #pragma omp parallel for
   for (int i = 0; i < numToTry; i++)
@@ -126,16 +132,16 @@ RotorBruteForceResult fullRotorBruteForce(int *input, int length)
     Rotor rotor2 = generateRotor(rotorCombinations[i % numCombinations][1], 0);
     Rotor rotor3 = generateRotor(rotorCombinations[i % numCombinations][2], 0);
     Reflector reflector = generateReflector(i / numCombinations);
-    Plugboard plugboard = generateEmptyPlugboard(); // Assuming empty plugboard as IOC is uneffected by plugboard
+    // Plugboard plugboard = generateEmptyPlugboard(); // Assuming empty plugboard as IOC is uneffected by plugboard
 
-    EnigmaMachine *tempMachine = generateMachine(rotor1, rotor2, rotor3, reflector, plugboard);
-    RotorBruteForceResult result = rotorSettingBruteForce(tempMachine, input, length);
+    EnigmaMachine *tempMachine = generateMachine(rotor1, rotor2, rotor3, reflector, *plugboard);
+    BruteForceResult result = rotorSettingBruteForce(tempMachine, input, length);
     freeEnigmaMachine(tempMachine);
 
     resultsList[i] = result;
   }
 
-  RotorBruteForceResult combinedResult = {0};
+  BruteForceResult combinedResult = {0};
   combinedResult.numResults = numSaved;
   for (int i = 0; i < numSaved; i++)
   {
@@ -153,7 +159,7 @@ RotorBruteForceResult fullRotorBruteForce(int *input, int length)
   return combinedResult;
 }
 
-char **testResults(RotorBruteForceResult result, int *textInput, int length)
+char **testResults(BruteForceResult result, int *textInput, int length)
 {
   char **results = malloc(numSaved * sizeof(char *));
   if (results == NULL)
@@ -184,4 +190,85 @@ char **testResults(RotorBruteForceResult result, int *textInput, int length)
              intArrToCharArr(runEnigmaMachine(decompressEnigmaMachine(&result.scores[i].config), textInput, length), length));
   }
   return results;
+}
+
+BruteForceResult plugboardBruteForce(Plugboard *plugboard, int *input, int length)
+{
+  if (plugboard == NULL)
+  {
+    Plugboard p = generateEmptyPlugboard();
+    plugboard = &p;
+  }
+
+  BruteForceResult result = {0};
+  result.numResults = numSaved;
+  for (int i = 0; i < numSaved; i++)
+  {
+    result.scores[i].score = -100;
+  }
+
+  int nextPlugIndex = 0;
+  for (int i = 0; i < 10; i++)
+  {
+    if (i >= 10)
+    {
+      return result;
+    }
+    if (plugboard->wiring[i][0] == -1 || plugboard->wiring[i][1] == -1)
+    {
+      nextPlugIndex = i;
+      break;
+    }
+  }
+
+  for (int i = 0; i < 26; i++)
+  {
+    for (int j = i + 1; j < 26; j++)
+    {
+      if (nextPlugIndex >= 10)
+      {
+        continue;
+      }
+
+      int skip = 0;
+      for (int k = 0; k < nextPlugIndex; k++)
+      {
+        // Check if the plug is already used
+        if (plugboard->wiring[k][0] == i || plugboard->wiring[k][1] == i ||
+            plugboard->wiring[k][0] == j || plugboard->wiring[k][1] == j)
+        {
+          skip = 1;
+          break;
+        }
+      }
+      if (skip || i == j)
+      {
+        continue;
+      }
+
+      plugboard->wiring[nextPlugIndex][0] = i;
+      plugboard->wiring[nextPlugIndex][1] = j;
+
+      int fakePlugboard[21] = {0};
+      for (int k = 0; k < 10; k++)
+      {
+        fakePlugboard[k * 2] = plugboard->wiring[k][0];
+        fakePlugboard[k * 2 + 1] = plugboard->wiring[k][1];
+      }
+      fakePlugboard[20] = 0;
+      printf("Plugboard: %s\n", fakePlugboard);
+
+      BruteForceResult thisIterarion = fullRotorBruteForce(plugboard, input, length);
+      BruteForceResult nextIteration = plugboardBruteForce(plugboard, input, length);
+      for (int k = 0; k < numSaved; k++)
+      {
+        addScoresToResults(&result, &thisIterarion.scores[k]);
+      }
+      for (int k = 0; k < numSaved; k++)
+      {
+        addScoresToResults(&result, &nextIteration.scores[k]);
+      }
+    }
+  }
+  return result;
 }
